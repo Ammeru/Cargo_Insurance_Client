@@ -9,12 +9,13 @@ import CompaniesPage from "./pages/CompaniesPage";
 import {
     ADMIN_ROUTE,
     BILLING_ROUTE,
-    COMPANIES_ROUTE, LOGIN_ROUTE,
+    COMPANIES_ROUTE, LOGIN_COMPANY_ROUTE, LOGIN_ROUTE,
     MAIN_ROUTE,
     MyORDERS_ROUTE,
     ORDER_ROUTE,
-    PROFILE_ROUTE, REGISTER_ROUTE
+    PROFILE_ROUTE, REGISTER_COMPANY_ROUTE, REGISTER_ROUTE
 } from "./utils/consts";
+import CompanyAuthPage from "./pages/CompanyAuthPage";
 
 export const authRoutes = [
     {
@@ -56,4 +57,12 @@ export const publicRoutes = [
         path: LOGIN_ROUTE,
         Component: AuthPage
     },
+    {
+        path: REGISTER_COMPANY_ROUTE,
+        Component: CompanyAuthPage
+    },
+    {
+        path: LOGIN_COMPANY_ROUTE,
+        Component: CompanyAuthPage
+    }
 ]

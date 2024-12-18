@@ -8,6 +8,7 @@ import '../styles/CompanyAuthPage.css';
 const CompanyAuthPage = () => {
     const location = useLocation();
     const isLogin = location.pathname === LOGIN_COMPANY_ROUTE;
+    const ApiKey = process.env.REACT_APP_API_KEY;
 
     const [map, setMap] = useState(null);
     const [marker, setMarker] = useState(null);
@@ -22,8 +23,8 @@ const CompanyAuthPage = () => {
                 load().then((mapglAPI) => {
                     const newMap = new mapglAPI.Map(mapContainerRef.current, {
                         center: [53.855, 27.605],
-                        zoom: 7,
-                        key: process.env.API_KEY,
+                        zoom: 15,
+                        key: ApiKey,
                     });
 
                     setTimeout(() => {
@@ -48,7 +49,7 @@ const CompanyAuthPage = () => {
     // Функция прямого геокодинга (получение координат по адресу)
     const geocodeAddress = debounce(async (address) => {
         try {
-            const response = await fetch(`https://catalog.api.2gis.com/3.0/items/geocode?q=${encodeURIComponent(address)}&key=${process.env.API_KEY}&fields=items.fullName,items.point`);
+            const response = await fetch(`https://catalog.api.2gis.com/3.0/items/geocode?q=${encodeURIComponent(address)}&key=${ApiKey}&fields=items.fullName,items.point`);
             const data = await response.json();
 
             if (data.result && data.result.items && data.result.items.length > 0) {
@@ -83,14 +84,14 @@ const CompanyAuthPage = () => {
 
     return (
         <Container
-            className={"d-flex justify-content-between align-items-center"}
-            style={{height: window.innerHeight - 60}}
+            className={"d-flex justify-content-center align-items-center"}
+            style={{height: window.innerHeight - 100}}
         >
-            <Row>
-                <Col md={6}>
-                    <Card style={{width: 600}} className="p-5">
-                        <h2 className={"m-auto"}>{isLogin ? 'Авторизация' : 'Регистрация'}</h2>
-                        <Form className={"d-flex flex-column"}>
+            <Row className="auth-row">
+                <Col md={isLogin ? 12 : 8} className="auth-col">
+                    <Card className={`auth-card ${isLogin ? 'login' : ''}`}>
+                        <h2 className="auth-title">{isLogin ? 'Авторизация' : 'Регистрация'}</h2>
+                        <Form className="auth-form">
                             {!isLogin && (
                                 <Form.Control
                                     className={"mt-3"}
@@ -117,7 +118,7 @@ const CompanyAuthPage = () => {
                                 />
                             )}
                             {addressList.length > 0 && (
-                                <ul className={"address-list"}>
+                                <ul className="address-list">
                                     {addressList.map((item, index) => (
                                         <li key={index} onClick={() => handleSelectAddress(item)}>
                                             {item.full_name}
@@ -131,7 +132,7 @@ const CompanyAuthPage = () => {
                                     placeholder={"Описание..."}
                                 />
                             )}
-                            <Row className={"mt-3"}>
+                            <Row className="mt-3">
                                 <Col>
                                     {isLogin ?
                                         <div>
@@ -140,12 +141,13 @@ const CompanyAuthPage = () => {
                                         </div>
                                         :
                                         <div>
-                                            Есть аккаунт? <NavLink to={LOGIN_COMPANY_ROUTE}>Войдите!</NavLink>
+                                            Есть аккаунт? <NavLink
+                                            to={LOGIN_COMPANY_ROUTE}>Войдите!</NavLink>
                                         </div>
                                     }
                                 </Col>
-                                <Col className={"d-flex justify-content-end"}>
-                                    <Button variant={"outline-success"}>
+                                <Col className="d-flex justify-content-end">
+                                    <Button variant="outline-success">
                                         {isLogin ? 'Войти' : 'Зарегистрироваться'}
                                     </Button>
                                 </Col>
@@ -154,13 +156,10 @@ const CompanyAuthPage = () => {
                     </Card>
                 </Col>
                 {!isLogin &&
-                    <Col md={6} className={"d-flex align-items-start mt-4"}>
+                    <Col md={4} className="map-col">
                         <div
                             ref={mapContainerRef}
-                            style={{
-                                width: "100%", height: "500px",
-                                marginLeft: "30px", borderRadius: "8px", border: "1px solid #ddd"
-                            }}
+                            className="map-container"
                         ></div>
                     </Col>
                 }

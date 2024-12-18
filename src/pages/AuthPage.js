@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import {LOGIN_ROUTE, REGISTER_ROUTE} from "../utils/consts";
 import {NavLink, useLocation} from "react-router-dom";
+import '../styles/AuthPage.css';
 
 const AuthPage = () => {
     const location = useLocation();
@@ -10,9 +11,9 @@ const AuthPage = () => {
     return (
         <Container
             className={"d-flex justify-content-center align-items-center"}
-            style={{height: window.innerHeight - 54}}
+            style={{height: window.innerHeight - 100}}
         >
-            <Card style={{width: 600}} className="p-5">
+            <Card className="auth-card">
                 <h2 className={"m-auto"}>{isLogin ? 'Авторизация' : 'Регистрация'}</h2>
                 <Form className={"d-flex flex-column"}>
                     {!isLogin && (

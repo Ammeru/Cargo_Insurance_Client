@@ -5,11 +5,10 @@ import OrderPage from "./pages/OrderPage";
 import ProfilePage from "./pages/ProfilePage";
 import AuthPage from "./pages/AuthPage";
 import MainPage from "./pages/MainPage";
-import CompaniesPage from "./pages/CompaniesPage";
 import {
     ADMIN_ROUTE,
     BILLING_ROUTE,
-    COMPANIES_ROUTE, LOGIN_COMPANY_ROUTE, LOGIN_ROUTE,
+    LOGIN_COMPANY_ROUTE, LOGIN_ROUTE,
     MAIN_ROUTE,
     MyORDERS_ROUTE,
     ORDER_ROUTE,
@@ -41,10 +40,6 @@ export const authRoutes = [
 ]
 
 export const publicRoutes = [
-    {
-        path: COMPANIES_ROUTE,
-        Component: CompaniesPage
-    },
     {
         path: MAIN_ROUTE,
         Component: MainPage

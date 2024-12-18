@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import {LOGIN_COMPANY_ROUTE, REGISTER_COMPANY_ROUTE} from "../utils/consts";
 import {NavLink, useLocation} from "react-router-dom";
-import {API_KEY} from "../utils/consts";
 import { debounce } from 'lodash';
 import '../styles/CompanyAuthPage.css';
 
@@ -24,7 +23,7 @@ const CompanyAuthPage = () => {
                     const newMap = new mapglAPI.Map(mapContainerRef.current, {
                         center: [53.855, 27.605],
                         zoom: 7,
-                        key: API_KEY,
+                        key: process.env.API_KEY,
                     });
 
                     setTimeout(() => {
@@ -49,7 +48,7 @@ const CompanyAuthPage = () => {
     // Функция прямого геокодинга (получение координат по адресу)
     const geocodeAddress = debounce(async (address) => {
         try {
-            const response = await fetch(`https://catalog.api.2gis.com/3.0/items/geocode?q=${encodeURIComponent(address)}&key=${API_KEY}&fields=items.fullName,items.point`);
+            const response = await fetch(`https://catalog.api.2gis.com/3.0/items/geocode?q=${encodeURIComponent(address)}&key=${process.env.API_KEY}&fields=items.fullName,items.point`);
             const data = await response.json();
 
             if (data.result && data.result.items && data.result.items.length > 0) {
@@ -95,7 +94,7 @@ const CompanyAuthPage = () => {
                             {!isLogin && (
                                 <Form.Control
                                     className={"mt-3"}
-                                    placeholder={"Как к вам обращаться..."}
+                                    placeholder={"Как называется ваша компания..."}
                                 />
                             )}
                             <Form.Control
@@ -106,15 +105,17 @@ const CompanyAuthPage = () => {
                                 className={"mt-3"}
                                 placeholder={"Введите ваш пароль..."}
                             />
-                            <Form.Control
-                                className={"mt-3"}
-                                placeholder={"Введите адрес..."}
-                                value={address || ''}
-                                onChange={(e) => {
-                                    setAddress(e.target.value);
-                                    geocodeAddress(e.target.value);
-                                }}
-                            />
+                            {!isLogin && (
+                                <Form.Control
+                                    className={"mt-3"}
+                                    placeholder={"Введите адрес..."}
+                                    value={address || ''}
+                                    onChange={(e) => {
+                                        setAddress(e.target.value);
+                                        geocodeAddress(e.target.value);
+                                    }}
+                                />
+                            )}
                             {addressList.length > 0 && (
                                 <ul className={"address-list"}>
                                     {addressList.map((item, index) => (
@@ -123,6 +124,12 @@ const CompanyAuthPage = () => {
                                         </li>
                                     ))}
                                 </ul>
+                            )}
+                            {!isLogin && (
+                                <Form.Control
+                                    className={"mt-3"}
+                                    placeholder={"Описание..."}
+                                />
                             )}
                             <Row className={"mt-3"}>
                                 <Col>

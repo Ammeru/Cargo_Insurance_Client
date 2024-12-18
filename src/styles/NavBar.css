@@ -1,0 +1,30 @@
+.navbar {
+    background-color: #343a40;
+}
+
+.nav {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: auto;
+    flex-wrap: nowrap;
+}
+
+.center-buttons {
+    margin-right: 0.5rem;
+}
+
+.right-buttons {
+    margin-left: 1.5rem;
+}
+
+.auth-buttons{
+    display: flex;
+    justify-content: flex-start;
+    max-width: 400px;
+    margin: 0 0.5rem;
+}
+
+.ms-3 {
+    margin-left: 1rem;
+}

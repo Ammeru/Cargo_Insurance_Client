@@ -2,9 +2,9 @@ import React from 'react';
 import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import {LOGIN_ROUTE, REGISTER_ROUTE} from "../utils/consts";
 import {NavLink, useLocation} from "react-router-dom";
-import '../styles/AuthPage.css';
+import '../styles/UserAuthPage.css';
 
-const AuthPage = () => {
+const UserAuthPage = () => {
     const location = useLocation();
     const isLogin = location.pathname === LOGIN_ROUTE;
 
@@ -13,7 +13,7 @@ const AuthPage = () => {
             className={"d-flex justify-content-center align-items-center"}
             style={{height: window.innerHeight - 100}}
         >
-            <Card className="auth-card">
+            <Card className="user-auth-card">
                 <h2 className={"m-auto"}>{isLogin ? 'Авторизация' : 'Регистрация'}</h2>
                 <Form className={"d-flex flex-column"}>
                     {!isLogin && (
@@ -54,4 +54,4 @@ const AuthPage = () => {
     );
 };
 
-export default AuthPage;
+export default UserAuthPage;

@@ -46,10 +46,22 @@ const CompanyAuthPage = () => {
         }
     }, [isLogin, map]);
 
+    const controllerRef = useRef(null);
+
     // Функция прямого геокодинга (получение координат по адресу)
     const geocodeAddress = debounce(async (address) => {
         try {
-            const response = await fetch(`https://catalog.api.2gis.com/3.0/items/geocode?q=${encodeURIComponent(address)}&key=${ApiKey}&fields=items.fullName,items.point`);
+            if (controllerRef.current) {
+                controllerRef.current.abort(); // Отменяем предыдущий запрос
+                console.log("Предыдущий AbortController отменён", controllerRef.current);
+            }
+
+            const controller = new AbortController();
+            controllerRef.current = controller;
+            console.log("Создан новый AbortController:", controllerRef.current);
+
+            console.log("Запрос отправлен", address);
+            const response = await fetch(`https://catalog.api.2gis.com/3.0/items/geocode?q=${encodeURIComponent(address)}&key=${ApiKey}&fields=items.fullName,items.point`, {signal: controller.signal});
             const data = await response.json();
 
             if (data.result && data.result.items && data.result.items.length > 0) {
@@ -60,9 +72,13 @@ const CompanyAuthPage = () => {
                 console.log("Координаты для адреса не найдены");
             }
         } catch (error) {
-            console.error("Ошибка при геокодировании адреса:", error);
+            if (error.name === "AbortError") {
+                console.log("Запрос отменён через AbortController");
+            } else {
+                console.error("Ошибка при выполнении запроса:", error);
+            }
         }
-    }, 500);
+    }, 800);
 
     // Состояние для хранения списка найденных адресов
     const [addressList, setAddressList] = useState([]);
@@ -87,11 +103,11 @@ const CompanyAuthPage = () => {
             className={"d-flex justify-content-center align-items-center"}
             style={{height: window.innerHeight - 100}}
         >
-            <Row className="auth-row">
-                <Col md={isLogin ? 12 : 8} className="auth-col">
-                    <Card className={`auth-card ${isLogin ? 'login' : ''}`}>
-                        <h2 className="auth-title">{isLogin ? 'Авторизация' : 'Регистрация'}</h2>
-                        <Form className="auth-form">
+            <Row className="company-auth-row">
+                <Col md={isLogin ? 12 : 8} className="company-auth-col">
+                    <Card className={`company-auth-card ${isLogin ? 'login' : ''}`}>
+                        <h2 className="company-auth-title">{isLogin ? 'Авторизация' : 'Регистрация'}</h2>
+                        <Form className="company-auth-form">
                             {!isLogin && (
                                 <Form.Control
                                     className={"mt-3"}
@@ -118,7 +134,7 @@ const CompanyAuthPage = () => {
                                 />
                             )}
                             {addressList.length > 0 && (
-                                <ul className="address-list">
+                                <ul className="company-address-list">
                                     {addressList.map((item, index) => (
                                         <li key={index} onClick={() => handleSelectAddress(item)}>
                                             {item.full_name}
@@ -156,10 +172,10 @@ const CompanyAuthPage = () => {
                     </Card>
                 </Col>
                 {!isLogin &&
-                    <Col md={4} className="map-col">
+                    <Col md={4} className="company-map-col">
                         <div
                             ref={mapContainerRef}
-                            className="map-container"
+                            className="company-map-container"
                         ></div>
                     </Col>
                 }

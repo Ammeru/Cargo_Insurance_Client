@@ -3,7 +3,7 @@ import BillingPage from "./pages/BillingPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import OrderPage from "./pages/OrderPage";
 import ProfilePage from "./pages/ProfilePage";
-import AuthPage from "./pages/AuthPage";
+import UserAuthPage from "./pages/UserAuthPage";
 import MainPage from "./pages/MainPage";
 import {
     ADMIN_ROUTE,
@@ -46,11 +46,11 @@ export const publicRoutes = [
     },
     {
         path: REGISTER_ROUTE,
-        Component: AuthPage
+        Component: UserAuthPage
     },
     {
         path: LOGIN_ROUTE,
-        Component: AuthPage
+        Component: UserAuthPage
     },
     {
         path: REGISTER_COMPANY_ROUTE,

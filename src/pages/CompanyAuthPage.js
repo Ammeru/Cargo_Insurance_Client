@@ -1,9 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
-import {LOGIN_COMPANY_ROUTE, REGISTER_COMPANY_ROUTE} from "../utils/consts";
-import {NavLink, useLocation} from "react-router-dom";
+import {LOGIN_COMPANY_ROUTE, MAIN_ROUTE, REGISTER_COMPANY_ROUTE} from "../utils/consts";
+import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import { debounce } from 'lodash';
 import '../styles/CompanyAuthPage.css';
+import {Context} from "../context";
+import {login, registration} from "../http/userAPI";
 
 const CompanyAuthPage = () => {
     const location = useLocation();
@@ -14,6 +16,29 @@ const CompanyAuthPage = () => {
     const [marker, setMarker] = useState(null);
     const [address, setAddress] = useState("");
     const mapContainerRef = useRef(null);
+
+    const {user} = useContext(Context);
+    const history = useNavigate();
+    const [companyName, setCompanyName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [description, setDescription] = useState('');
+
+    const click = async () => {
+        try {
+            let data;
+            if (isLogin) {
+                data = await login(email, password);
+            } else {
+                data = await registration(companyName, email, password, address, description);
+            }
+            user.setUser(user);
+            user.setIsAuth(true);
+            history(MAIN_ROUTE);
+        } catch (e) {
+            alert(e.response.data.message);
+        }
+    }
 
     // Инициализация карты
     useEffect(() => {
@@ -52,15 +77,12 @@ const CompanyAuthPage = () => {
     const geocodeAddress = debounce(async (address) => {
         try {
             if (controllerRef.current) {
-                controllerRef.current.abort(); // Отменяем предыдущий запрос
-                console.log("Предыдущий AbortController отменён", controllerRef.current);
+                controllerRef.current.abort();
             }
 
             const controller = new AbortController();
             controllerRef.current = controller;
-            console.log("Создан новый AbortController:", controllerRef.current);
 
-            console.log("Запрос отправлен", address);
             const response = await fetch(`https://catalog.api.2gis.com/3.0/items/geocode?q=${encodeURIComponent(address)}&key=${ApiKey}&fields=items.fullName,items.point`, {signal: controller.signal});
             const data = await response.json();
 
@@ -78,7 +100,7 @@ const CompanyAuthPage = () => {
                 console.error("Ошибка при выполнении запроса:", error);
             }
         }
-    }, 800);
+    }, 850);
 
     // Состояние для хранения списка найденных адресов
     const [addressList, setAddressList] = useState([]);
@@ -112,15 +134,22 @@ const CompanyAuthPage = () => {
                                 <Form.Control
                                     className={"mt-3"}
                                     placeholder={"Как называется ваша компания..."}
+                                    value={companyName}
+                                    onChange={e => setCompanyName(e.target.value)}
                                 />
                             )}
                             <Form.Control
                                 className={"mt-3"}
                                 placeholder={"Введите ваш email..."}
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
                             />
                             <Form.Control
                                 className={"mt-3"}
                                 placeholder={"Введите ваш пароль..."}
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                type="password"
                             />
                             {!isLogin && (
                                 <Form.Control
@@ -146,6 +175,8 @@ const CompanyAuthPage = () => {
                                 <Form.Control
                                     className={"mt-3"}
                                     placeholder={"Описание..."}
+                                    value={description}
+                                    onChange={e => setDescription(e.target.value)}
                                 />
                             )}
                             <Row className="mt-3">
@@ -162,8 +193,11 @@ const CompanyAuthPage = () => {
                                         </div>
                                     }
                                 </Col>
-                                <Col className="d-flex justify-content-end">
-                                    <Button variant="outline-success">
+                                <Col className={"d-flex justify-content-end"}>
+                                    <Button
+                                        variant={"outline-success"}
+                                        onClick={click}
+                                    >
                                         {isLogin ? 'Войти' : 'Зарегистрироваться'}
                                     </Button>
                                 </Col>

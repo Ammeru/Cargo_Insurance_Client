@@ -2,12 +2,12 @@ import React, {useContext} from 'react';
 import {Context} from "../context";
 import {Button, Container, Nav, Navbar} from "react-bootstrap";
 import {observer} from "mobx-react-lite";
-import {useNavigate} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 import {
     ADMIN_ROUTE,
     BILLING_ROUTE,
     LOGIN_COMPANY_ROUTE,
-    LOGIN_ROUTE,
+    LOGIN_ROUTE, MAIN_ROUTE,
     MyORDERS_ROUTE,
     PROFILE_ROUTE
 } from "../utils/consts";
@@ -17,10 +17,15 @@ const NavBar = observer( () => {
     const {user} = useContext(Context);
     const history = useNavigate();
 
+    const logOut = () => {
+        user.setUser({});
+        user.setIsAuth(false);
+    }
+
     return (
         <Navbar className="nabvar" data-bs-theme="dark">
             <Container>
-                <Navbar.Brand href="/">БелГрузСтрах</Navbar.Brand>
+                <NavLink style={{color: "white"}} to={MAIN_ROUTE}>CargoInsSystem</NavLink>
                 {user.isAuth ?
                     <Nav className="nav">
                         {user.role === 'admin' ? (
@@ -79,7 +84,7 @@ const NavBar = observer( () => {
                             <Button
                                 variant={"outline-light"}
                                 className="right-buttons"
-                                onClick={() => history(LOGIN_ROUTE)}
+                                onClick={() => logOut()}
                             >
                                 Выйти
                             </Button>
